@@ -1,17 +1,10 @@
-# Netlify build configuration for the Vite + React app.
-# netlify.toml values override the site's UI build settings,
-# so this pins everything explicitly and avoids relying on
-# framework auto-detection (which reported "Unknown").
-
 [build]
-  command = "npm run build"
+  command = "NODE_OPTIONS=--max-old-space-size=4096 npm run build"
   publish = "build"
 
 [build.environment]
   NODE_VERSION = "22"
 
-# Single-page app: route all paths to index.html so React Router
-# handles client-side navigation on refresh/deep links.
 [[redirects]]
   from = "/*"
   to = "/index.html"
