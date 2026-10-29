@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Core Colors */
+    --color-background: #F8FAFC; /* slate-50 */
+    --color-foreground: #1F2937; /* gray-800 */
+    --color-border: #E5E7EB; /* gray-200 */
+    --color-input: #FFFFFF; /* white */
+    --color-ring: #1E40AF; /* blue-800 */
+    
+    /* Card Colors */
+    --color-card: #FFFFFF; /* white */
+    --color-card-foreground: #1F2937; /* gray-800 */
+    
+    /* Popover Colors */
+    --color-popover: #FFFFFF; /* white */
+    --color-popover-foreground: #1F2937; /* gray-800 */
+    
+    /* Muted Colors */
+    --color-muted: #F3F4F6; /* gray-100 */
+    --color-muted-foreground: #6B7280; /* gray-500 */
+    
+    /* Primary Colors */
+    --color-primary: #1E40AF; /* blue-800 */
+    --color-primary-foreground: #FFFFFF; /* white */
+    
+    /* Secondary Colors */
+    --color-secondary: #059669; /* emerald-600 */
+    --color-secondary-foreground: #FFFFFF; /* white */
+    
+    /* Destructive Colors */
+    --color-destructive: #DC2626; /* red-600 */
+    --color-destructive-foreground: #FFFFFF; /* white */
+    
+    /* Accent Colors */
+    --color-accent: #F59E0B; /* amber-500 */
+    --color-accent-foreground: #1F2937; /* gray-800 */
+    
+    /* Success Colors */
+    --color-success: #10B981; /* emerald-500 */
+    --color-success-foreground: #FFFFFF; /* white */
+    
+    /* Warning Colors */
+    --color-warning: #F59E0B; /* amber-500 */
+    --color-warning-foreground: #1F2937; /* gray-800 */
+    
+    /* Error Colors */
+    --color-error: #EF4444; /* red-500 */
+    --color-error-foreground: #FFFFFF; /* white */
+    
+    /* Brand Specific Colors */
+    --color-brand-primary: #1E40AF; /* blue-800 */
+    --color-brand-secondary: #004499; /* blue-900 */
+    --color-conversion-accent: #FF6B35; /* orange-500 */
+    --color-trust-builder: #00AA44; /* green-600 */
+    --color-text-primary: #1A1A1A; /* gray-900 */
+    --color-text-secondary: #666666; /* gray-600 */
+    --color-cta-action: #FF4444; /* red-500 */
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+    /* Prevent layout shift and jumping */
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+
+  .font-mono {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  }
+
+  /* Prevent cumulative layout shift (CLS) */
+  img {
+    max-width: 100%;
+    height: auto;
+    /* Reserve space to prevent layout shifts */
+    aspect-ratio: attr(width) / attr(height);
+  }
+}
+
+@layer components {
+  .operational-gradient {
+    background: linear-gradient(135deg, #1E40AF 0%, #004499 100%);
+  }
+
+  .trust-shadow {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .premium-shadow {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  }
+
+  /* Reduce pulse animation intensity to prevent visual jumping */
+  .pulse-availability {
+    animation: gentle-pulse 3s infinite;
+  }
+
+  /* Smoother transitions that don't cause layout shifts */
+  .smooth-transition {
+    transition: opacity 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                box-shadow 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+
+  /* Stable loading states */
+  .stable-loading {
+    min-height: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Prevent content jumping during image loading */
+  .image-container {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .image-container img {
+    transition: opacity 0.2s ease-in-out;
+  }
+
+  /* Stable grid layouts */
+  .stable-grid {
+    display: grid;
+    grid-template-rows: min-content;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Utility for preventing layout shifts */
+  .no-layout-shift {
+    contain: layout style;
+  }
+
+  /* Stable dimensions utilities */
+  .stable-height {
+    min-height: 200px;
+  }
+
+  .stable-width {
+    min-width: 200px;
+  }
+}
+
+/* Custom animations that prevent jumping */
+@keyframes gentle-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.02);
+  }
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .pulse-availability {
+    animation: none;
+  }
+  
+  .smooth-transition {
+    transition: none;
+  }
+  
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Safari-specific fixes for jumping issues */
+@supports (-webkit-appearance: none) {
+  body {
+    /* Safari performance optimization */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  .smooth-transition {
+    /* Safari-specific transition optimization */
+    -webkit-backface-visibility: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
+  }
+}
+
+/* Chrome-specific fixes */
+@supports (display: -webkit-box) {
+  .image-container {
+    /* Chrome image rendering optimization */
+    image-rendering: -webkit-optimize-contrast;
+  }
+}

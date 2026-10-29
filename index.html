@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <title>GoShuttle Pro - Premium Transportation Service</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0066cc" />
+  <meta name="description" content="Professional shuttle service in Metro Manila. Reliable corporate transportation with modern fleet and experienced drivers." />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="GoShuttle Pro" />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://goshuttle.ph/" />
+  <meta property="og:title" content="GoShuttle Pro - Premium Transportation Service" />
+  <meta property="og:description" content="Professional shuttle service in Metro Manila. Reliable corporate transportation with modern fleet and experienced drivers." />
+  <meta property="og:site_name" content="GoShuttle Pro" />
+  <meta property="og:image" content="https://goshuttle.ph/assets/images/goshuttle-vertical-1762404728137.png" />
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="GoShuttle Pro - Premium Transportation Service" />
+  <meta name="twitter:description" content="Professional shuttle service in Metro Manila. Reliable corporate transportation with modern fleet and experienced drivers." />
+  <meta name="twitter:image" content="https://goshuttle.ph/assets/images/goshuttle-vertical-1762404728137.png" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/assets/images/goshuttle-vertical-1762404728137.png" id="favicon" />
+  <link rel="apple-touch-icon" href="/assets/images/goshuttle-vertical-1762404728137.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- DNS Prefetch for third-party origins (reduces connection latency) -->
+  <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+  <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+  <link rel="dns-prefetch" href="https://img.rocket.new" />
+  <link rel="dns-prefetch" href="https://images.unsplash.com" />
+  <link rel="dns-prefetch" href="https://maps.googleapis.com" />
+  <link rel="dns-prefetch" href="https://maps.gstatic.com" />
+
+  <!-- Preconnect to critical third-party origins (LCP improvement) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <!-- Preload critical font (reduces LCP render-blocking) -->
+  <link rel="preload" as="font" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiJ-Ek-_EeA.woff2" type="font/woff2" crossorigin />
+
+  <!-- Preload the app logo used in Header (LCP candidate) -->
+  <link rel="preload" as="image" href="/assets/images/goshuttle-vertical-1762404728137.png" fetchpriority="high" />
+
+  <!-- Critical inline CSS to prevent CLS on initial paint -->
+  <style>
+    /* Prevent layout shift: reserve space for root before React hydrates */
+    #root { min-height: 100vh; }
+    /* Prevent FOUT (Flash of Unstyled Text) */
+    body { font-family: Inter, system-ui, -apple-system, sans-serif; margin: 0; }
+    /* Prevent CLS from images without explicit dimensions */
+    img { max-width: 100%; height: auto; }
+    /* Prevent CLS from hero section gradient background */
+    .hero-section { min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e293b 100%); }
+    /* Prevent CLS from header placeholder */
+    header, [class*="header"] { height: 64px; }
+    /* Smooth scroll without layout shift */
+    html { scroll-behavior: smooth; }
+  </style>
+
+  <!-- Rocket analytics (defer to not block FID/FCP) -->
+  </head>
+
+<body>
+  <noscript>You need to enable JavaScript to run this app.</noscript>
+  <div class="dhiwise-code" id="root"></div>
+  <script type="module" src="/src/index.jsx"></script>
+</body>
+
+</html>
