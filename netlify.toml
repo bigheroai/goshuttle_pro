@@ -3,6 +3,7 @@
 # so this pins everything explicitly and avoids relying on
 # framework auto-detection (which reported "Unknown").
 # Python is not used by this build; NODE_VERSION pins the toolchain.
+# Output: Vite writes to "build" (see vite.config.mjs outDir).
 
 [build]
   command = "npm run build"
