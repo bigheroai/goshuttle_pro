@@ -2,6 +2,7 @@
 # netlify.toml values override the site's UI build settings,
 # so this pins everything explicitly and avoids relying on
 # framework auto-detection (which reported "Unknown").
+# Python is not used by this build; NODE_VERSION pins the toolchain.
 
 [build]
   command = "npm run build"
