@@ -6,3 +6,11 @@ package-lock.json
 .vscode/
 .idea/
 vite.config.*s.*
+
+# Next.js
+/.next
+/out
+next-env.d.ts
+
+# Local Netlify folder
+.netlify

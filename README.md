@@ -1,107 +1,55 @@
-# React
+# GoShuttle Pro
 
-A modern React-based project utilizing the latest frontend technologies and tools for building responsive web applications.
+Shuttle booking and fleet operations platform, built with **Next.js (App Router)**, React 19, Tailwind CSS and Supabase, deployed on Netlify.
 
-## 🚀 Features
-
-- **React 18** - React version with improved rendering and concurrent features
-- **Vite** - Lightning-fast build tool and development server
-- **Redux Toolkit** - State management with simplified Redux setup
-- **TailwindCSS** - Utility-first CSS framework with extensive customization
-- **React Router v6** - Declarative routing for React applications
-- **Data Visualization** - Integrated D3.js and Recharts for powerful data visualization
-- **Form Management** - React Hook Form for efficient form handling
-- **Animation** - Framer Motion for smooth UI animations
-- **Testing** - Jest and React Testing Library setup
-
-## 📋 Prerequisites
-
-- Node.js (v14.x or higher)
-- npm or yarn
-
-## 🛠️ Installation
-
-1. Install dependencies:
-   ```bash
-   npm install
-   # or
-   yarn install
-   ```
-   
-2. Start the development server:
-   ```bash
-   npm start
-   # or
-   yarn start
-   ```
-
-## 📁 Project Structure
-
-```
-react_app/
-├── public/             # Static assets
-├── src/
-│   ├── components/     # Reusable UI components
-│   ├── pages/          # Page components
-│   ├── styles/         # Global styles and Tailwind configuration
-│   ├── App.jsx         # Main application component
-│   ├── Routes.jsx      # Application routes
-│   └── index.jsx       # Application entry point
-├── .env                # Environment variables
-├── index.html          # HTML template
-├── package.json        # Project dependencies and scripts
-├── tailwind.config.js  # Tailwind CSS configuration
-└── vite.config.js      # Vite configuration
-```
-
-## 🧩 Adding Routes
-
-To add new routes to the application, update the `Routes.jsx` file:
-
-```jsx
-import { useRoutes } from "react-router-dom";
-import HomePage from "pages/HomePage";
-import AboutPage from "pages/AboutPage";
-
-const ProjectRoutes = () => {
-  let element = useRoutes([
-    { path: "/", element: <HomePage /> },
-    { path: "/about", element: <AboutPage /> },
-    // Add more routes as needed
-  ]);
-
-  return element;
-};
-```
-
-## 🎨 Styling
-
-This project uses Tailwind CSS for styling. The configuration includes:
-
-- Forms plugin for form styling
-- Typography plugin for text styling
-- Aspect ratio plugin for responsive elements
-- Container queries for component-specific responsive design
-- Fluid typography for responsive text
-- Animation utilities
-
-## 📱 Responsive Design
-
-The app is built with responsive design using Tailwind CSS breakpoints.
-
-
-## 📦 Deployment
-
-Build the application for production:
+## Getting started
 
 ```bash
-npm run build
+npm install
+npm run dev      # http://localhost:3000
 ```
 
-## 🙏 Acknowledgments
+## Project structure
 
-- Built with [Rocket.new](https://rocket.new)
-- Powered by React and Vite
-- Styled with Tailwind CSS
+```
+app/                     # Next.js routes (one folder per URL) + API route handlers
+  layout.jsx             # Root layout, global metadata and providers
+  api/
+    email/send/          # Server-side Resend fallback (requires signed-in user)
+    payments/paymongo/   # config (public settings), checkout, refund (admin)
+src/
+  views/                 # Page components (formerly src/pages in the Vite app)
+  components/            # Shared UI
+  services/, utils/      # Supabase data access and helpers
+  lib/router.jsx         # react-router-dom compatible API on top of next/navigation
+  lib/helmet.jsx         # <Helmet> replacement (React 19 hoists <title>/<meta>)
+  server/                # Server-only helpers (Supabase, PayMongo)
+supabase/                # Database migrations and Edge Functions
+```
 
-Built with ❤️ on Rocket.new
+Pages are currently client-rendered (`next/dynamic` with `ssr: false`) to keep
+behaviour identical to the previous single-page app. Public pages can be moved
+to server rendering one at a time.
+
+## Adding a route
+
+Create `app/<path>/page.jsx`:
+
+```jsx
+'use client';
+import dynamic from 'next/dynamic';
+const MyView = dynamic(() => import('@/views/my-view'), { ssr: false });
+export default function Page() { return <MyView />; }
+```
+
+## Environment variables
+
+| Name | Where | Purpose |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | public | Supabase client |
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | public | Maps |
+| `NEXT_PUBLIC_AWS_LAMBDA_CHAT_COMPLETION_URL` | public | AI chat endpoint |
+| `RESEND_API_KEY` | server only | Email fallback route |
+| `SUPABASE_SERVICE_ROLE_KEY` | server only (optional) | Lets the server read PayMongo secrets once `app_settings` RLS is tightened |
+
+The legacy `VITE_*` names for the public variables are still accepted.

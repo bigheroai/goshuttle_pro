@@ -128,7 +128,7 @@ const PlacesAutocomplete = ({
 
   // Initialize Google Places Autocomplete
   useEffect(() => {
-    const apiKey = import.meta.env?.VITE_GOOGLE_MAPS_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
     if (!apiKey || apiKey === 'your-google-maps-api-key-here') {
       return;
@@ -267,7 +267,7 @@ const PlacesAutocomplete = ({
         const { latitude, longitude } = position?.coords;
 
         try {
-          const apiKey = import.meta.env?.VITE_GOOGLE_MAPS_API_KEY;
+          const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
           if (apiKey && apiKey !== 'your-google-maps-api-key-here') {
             await loadGoogleMapsScript(apiKey);
             const geocoder = new window.google.maps.Geocoder();

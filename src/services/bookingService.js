@@ -330,7 +330,6 @@ class BookingService {
               type: 'admin_notification',
               admin_email: settings?.admin_email,
               ...(from_email ? { from_email } : {}),
-              resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
               booking_data: emailData
             }
           });
@@ -457,7 +456,6 @@ class BookingService {
               type: 'admin_notification',
               admin_email: settings?.admin_email,
               ...(from_email ? { from_email } : {}),
-              resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
               booking_data: emailData
             }
           });
@@ -552,7 +550,6 @@ class BookingService {
           type: 'new_booking',
           to_email: settings?.admin_email,
           admin_name: settings?.admin_name || 'Admin',
-          resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
           booking_data: emailData
         }
       });
@@ -779,7 +776,6 @@ class BookingService {
   async sendBookingConfirmationEmail(bookingData, emailType = 'customer_confirmation') {
     try {
       const emailSettings = await this.getEmailSettings();
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
       
       const { data, error } = await supabase?.functions?.invoke('send-booking-confirmation', {
         body: {
@@ -787,7 +783,6 @@ class BookingService {
           customer_email: bookingData?.customer_email || bookingData?.email,
           admin_email: emailSettings?.admin_email,
           from_email: emailSettings?.from_email,
-          resend_api_key: resendApiKey,
           type: emailType
         }
       });
@@ -811,7 +806,6 @@ class BookingService {
   async sendGuestBookingConfirmation(bookingData) {
     try {
       const emailSettings = await this.getEmailSettings();
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
       
       const { data, error } = await supabase?.functions?.invoke('send-booking-confirmation', {
         body: {
@@ -819,7 +813,6 @@ class BookingService {
           customer_email: bookingData?.guest_email,
           admin_email: emailSettings?.admin_email,
           from_email: emailSettings?.from_email,
-          resend_api_key: resendApiKey,
           type: 'guest_booking_confirmation'
         }
       });
@@ -843,7 +836,6 @@ class BookingService {
   async sendAdminNotification(bookingData) {
     try {
       const emailSettings = await this.getEmailSettings();
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
       
       if (!emailSettings?.admin_email) {
         console.warn('Admin email not configured, skipping admin notification');
@@ -855,7 +847,6 @@ class BookingService {
           booking_data: bookingData,
           admin_email: emailSettings?.admin_email,
           from_email: emailSettings?.from_email,
-          resend_api_key: resendApiKey,
           type: 'admin_notification'
         }
       });
@@ -886,7 +877,6 @@ class BookingService {
 
       const settings = emailSettings?.setting_value;
       const adminEmail = settings?.admin_email || 'admin@goshuttle.com';
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
 
       const emailData = {
         booking_id: bookingData?.id?.substring(0, 8)?.toUpperCase(),
@@ -900,7 +890,6 @@ class BookingService {
           type: 'booking_confirmed',
           to_email: adminEmail,
           admin_name: settings?.admin_name || 'Admin',
-          resend_api_key: resendApiKey,
           booking_data: emailData
         }
       });
@@ -923,7 +912,6 @@ class BookingService {
         return;
       }
 
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
 
       const emailData = {
         booking_id: bookingData?.id?.substring(0, 8)?.toUpperCase(),
@@ -946,7 +934,6 @@ class BookingService {
         body: {
           type: 'customer_confirmation',
           customer_email: customerEmail,
-          resend_api_key: resendApiKey,
           booking_data: emailData
         }
       });
@@ -1055,7 +1042,6 @@ class BookingService {
           type: 'test_email',
           customer_email: targetEmail,
           from_email: settings?.from_email,
-          resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
           booking_data: {
             booking_id: 'TEST-' + Date.now(),
             customer_name: 'Test User',
@@ -1182,7 +1168,6 @@ class BookingService {
           type: 'customer_confirmation',
           customer_email: bookingData?.user_profiles?.email,
           from_email: settings?.from_email,
-          resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
           booking_data: emailData
         }
       });
