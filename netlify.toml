@@ -5,3 +5,8 @@
 [build.environment]
   NODE_VERSION = "22"
   NODE_OPTIONS = "--max-old-space-size=4096"
+  # The manager and customer demo passwords are intentionally shown on the
+  # public login page's demo panel, so they are not secrets. Without this,
+  # Netlify's secrets scanner fails every Git build. DEMO_ADMIN_PASSWORD is
+  # deliberately NOT listed: it must never appear in the code.
+  SECRETS_SCAN_OMIT_KEYS = "DEMO_MANAGER_PASSWORD,DEMO_CUSTOMER_PASSWORD"
