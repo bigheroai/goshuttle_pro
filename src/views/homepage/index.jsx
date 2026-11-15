@@ -33,7 +33,8 @@ const Homepage = () => {
     "@type": "TransportationCompany",
     "name": "GoShuttle Pro",
     "url": "https://goshuttle.ph",
-    "logo": "https://img.rocket.new/generatedImages/rocket_gen_img_1aba63848-1777874818620.png",
+    "logo": "https://goshuttle.ph/assets/images/goshuttle-logo.png",
+    "image": "https://goshuttle.ph/assets/images/brand/fleet-lineup.jpg",
     "description": "Professional shuttle service in Metro Manila. Reliable corporate transportation with modern fleet and experienced drivers.",
     "areaServed": {
       "@type": "Place",
@@ -62,9 +63,9 @@ const Homepage = () => {
         <meta property="og:description" content="Seamless ground transportation with real-time tracking and professional service. Book your journey with confidence." />
         <meta property="og:type" content="website" />
         <meta property="og:url" content="https://goshuttle.ph/" />
-        <meta property="og:image" content="https://goshuttle.ph/assets/images/goshuttle-vertical-1762404728137.png" />
+        <meta property="og:image" content="https://goshuttle.ph/assets/images/goshuttle-logo.png" />
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:image" content="https://goshuttle.ph/assets/images/goshuttle-vertical-1762404728137.png" />
+        <meta name="twitter:image" content="https://goshuttle.ph/assets/images/goshuttle-logo.png" />
         <link rel="canonical" href="https://goshuttle.ph/" />
         <script type="application/ld+json">{JSON.stringify(structuredData)}</script>
       </Helmet>

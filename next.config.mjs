@@ -8,11 +8,15 @@ const publicEnv = (name) => process.env[`NEXT_PUBLIC_${name}`] || process.env[`V
 const nextConfig = {
   reactStrictMode: false,
   agentRules: false,
+  compiler: {
+    // Strip debug console.log/info/debug output from production bundles while
+    // keeping console.error and console.warn for real problems.
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error', 'warn'] } : false,
+  },
   env: {
     NEXT_PUBLIC_SUPABASE_URL: publicEnv('SUPABASE_URL'),
     NEXT_PUBLIC_SUPABASE_ANON_KEY: publicEnv('SUPABASE_ANON_KEY'),
     NEXT_PUBLIC_GOOGLE_MAPS_API_KEY: publicEnv('GOOGLE_MAPS_API_KEY'),
-    NEXT_PUBLIC_AWS_LAMBDA_CHAT_COMPLETION_URL: publicEnv('AWS_LAMBDA_CHAT_COMPLETION_URL'),
   },
   images: {
     remotePatterns: [

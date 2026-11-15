@@ -18,7 +18,7 @@ const LiveChat = () => {
       name: 'Maria Santos',
       message: 'Hello! Welcome to GoShuttle Pro support. How can I help you today?',
       timestamp: new Date(Date.now() - 300000),
-      avatar: "https://img.rocket.new/generatedImages/rocket_gen_img_13f6d061c-1762249131875.png",
+      avatar: "/assets/images/avatars/support-agent.webp",
       avatarAlt: 'Professional headshot of Filipino woman with shoulder-length black hair in white blouse'
     },
     {
@@ -111,7 +111,7 @@ const LiveChat = () => {
         name: 'Maria Santos',
         message: getContextualResponse(capturedMessage),
         timestamp: new Date(),
-        avatar: "https://img.rocket.new/generatedImages/rocket_gen_img_13f6d061c-1762249131875.png",
+        avatar: "/assets/images/avatars/support-agent.webp",
         avatarAlt: 'Professional headshot of Filipino woman with shoulder-length black hair in white blouse'
       };
       setMessages((prev) => [...prev, agentResponse]);

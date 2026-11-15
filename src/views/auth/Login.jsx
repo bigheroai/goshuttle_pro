@@ -90,7 +90,7 @@ const Login = () => {
         <div className="sm:mx-auto sm:w-full sm:max-w-md">
           <div className="flex justify-center">
             <img
-              src="/assets/images/goshuttle-vertical-1762404728137.png"
+              src="/assets/images/goshuttle-logo.png"
               alt="GoShuttle Pro Logo"
               className="h-16 w-auto"
             />
