@@ -1,5 +1,5 @@
 import OpenAI from 'openai';
-import { getRequestUser, isAdmin, json } from '@/server/supabase';
+import { getRequestAuth, json } from '@/server/auth';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,9 +40,9 @@ const sse = (data) => `data: ${JSON.stringify(data)}\n\n`;
  * - stream=true  → SSE events: {type:'start'|'chunk'|'done'|'error', ...}
  */
 export async function POST(request) {
-  const auth = await getRequestUser(request);
+  const auth = await getRequestAuth(request);
   if (!auth) return json({ error: 'Not authenticated' }, 401);
-  if (!(await isAdmin(auth.token))) return json({ error: 'Admin access required' }, 403);
+  if (!auth.isAdmin) return json({ error: 'Admin access required' }, 403);
 
   let body;
   try {

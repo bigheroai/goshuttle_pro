@@ -8,6 +8,8 @@ const publicEnv = (name) => process.env[`NEXT_PUBLIC_${name}`] || process.env[`V
 const nextConfig = {
   reactStrictMode: false,
   agentRules: false,
+  // Postgres drivers used by Netlify Database stay as runtime dependencies.
+  serverExternalPackages: ['pg', '@netlify/database'],
   compiler: {
     // Strip debug console.log/info/debug output from production bundles while
     // keeping console.error and console.warn for real problems.

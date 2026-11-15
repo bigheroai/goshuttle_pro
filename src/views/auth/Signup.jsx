@@ -113,13 +113,20 @@ const Signup = () => {
     setIsLoading(true);
 
     try {
-      const { user: newUser, error: signUpError } = await signUp(customerData?.email, customerData?.password, {
+      const { error: signUpError, needsConfirmation } = await signUp(customerData?.email, customerData?.password, {
         full_name: customerData?.full_name?.trim(),
         role: customerData?.role
       });
-      
+
       if (signUpError) {
         setError(signUpError);
+        return;
+      }
+
+      if (needsConfirmation) {
+        // Existing GoShuttle customers re-register here with the same email;
+        // their bookings and profile are reconnected after they confirm.
+        setSuccess('Account created! Check your inbox and click the confirmation link, then sign in. If you had a GoShuttle account before, use the same email and your history will be restored.');
         return;
       }
 

@@ -1,17 +1,13 @@
 import 'server-only';
-import { serverSupabase } from './supabase';
+import { db } from './db';
 
-const PAYMONGO_API_BASE = 'https://api.paymongo.com/v1';
-
-export async function getPaymongoSettings(accessToken) {
+/** Reads PayMongo settings (including secret keys) from Netlify Database. Server-only. */
+export async function getPaymongoSettings() {
   try {
-    const { data, error } = await serverSupabase(accessToken)
-      .from('app_settings')
-      .select('setting_value')
-      .eq('setting_key', 'paymongo_gateway_settings')
-      .single();
-    if (error || !data) return null;
-    return data.setting_value;
+    const { rows } = await db().pool.query(
+      "SELECT setting_value FROM public.app_settings WHERE setting_key = 'paymongo_gateway_settings' LIMIT 1",
+    );
+    return rows[0]?.setting_value ?? null;
   } catch (err) {
     console.error('Failed to load PayMongo settings:', err?.message || err);
     return null;
