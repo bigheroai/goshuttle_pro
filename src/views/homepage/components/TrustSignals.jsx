@@ -9,7 +9,7 @@ const TrustSignals = () => {
     name: "DOTr Certified",
     description: "Department of Transportation Registered",
     icon: "Shield",
-    badge: "https://img.rocket.new/generatedImages/rocket_gen_img_1035991d3-1762765314509.png",
+    badge: "/assets/images/badges/dotr-certified.webp",
     badgeAlt: "Official Department of Transportation certification badge with blue and gold seal",
     status: "Active",
     validUntil: "2025-12-31"
@@ -29,7 +29,7 @@ const TrustSignals = () => {
     name: "ISO 9001:2015",
     description: "Quality Management System",
     icon: "Award",
-    badge: "https://img.rocket.new/generatedImages/rocket_gen_img_1ca7069ef-1762765315141.png",
+    badge: "/assets/images/badges/iso-9001.webp",
     badgeAlt: "ISO 9001 quality management certification with international standards logo",
     status: "Certified",
     validUntil: "2026-03-20"

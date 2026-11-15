@@ -163,7 +163,7 @@ class RouteService {
       'Davao → General Santos': {
         description: 'Business corridor route',
         tags: ['Business Hub', 'Fast Route', 'Corporate Preferred'],
-        image: "https://img.rocket.new/generatedImages/rocket_gen_img_1156f5121-1776232553346.png",
+        image: "/assets/images/routes/city-skyline-sunset.webp",
         alt: 'Modern city skyline with tall buildings reflected in calm river water during golden sunset'
       }
     };

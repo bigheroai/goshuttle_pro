@@ -227,7 +227,7 @@ const RouteNetwork = () => {
     monthlyBookings: 1600,
     avgDuration: 105,
     startingPrice: 750,
-    image: "https://img.rocket.new/generatedImages/rocket_gen_img_1ece0de37-1776232224956.png",
+    image: "/assets/images/routes/calamba.webp",
     imageAlt: "Calamba city view with residential and commercial areas in Laguna province",
     features: ["CALABARZON Hub", "Residential Area", "Growing City"]
   },
@@ -240,7 +240,7 @@ const RouteNetwork = () => {
     monthlyBookings: 2800,
     avgDuration: 40,
     startingPrice: 400,
-    image: "https://img.rocket.new/generatedImages/rocket_gen_img_19069bd54-1776232224906.png",
+    image: "/assets/images/routes/alabang.webp",
     imageAlt: "Alabang commercial district with shopping malls and business establishments in Muntinlupa",
     features: ["South Hub", "Shopping Centers", "Business District"]
   },
@@ -253,7 +253,7 @@ const RouteNetwork = () => {
     monthlyBookings: 1900,
     avgDuration: 50,
     startingPrice: 400,
-    image: "https://img.rocket.new/generatedImages/rocket_gen_img_1a5128428-1776232224894.png",
+    image: "/assets/images/routes/cavite.webp",
     imageAlt: "Cavite province coastal area with residential neighborhoods and commercial zones",
     features: ["Coastal Province", "Affordable Fares", "Frequent Trips"]
   }];

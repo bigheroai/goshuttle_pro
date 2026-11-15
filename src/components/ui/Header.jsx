@@ -61,7 +61,7 @@ const Header = () => {
           {/* Logo */}
           <Link to={getLogoHref()} className="flex items-center space-x-3">
             <img
-              src="/assets/images/goshuttle-vertical-1762404728137.png"
+              src="/assets/images/goshuttle-logo.png"
               alt="GoShuttle Logo"
               className="h-10 w-auto object-contain"
             />

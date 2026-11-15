@@ -6,7 +6,7 @@ import Providers from '@/app-shell/Providers';
 const TITLE = 'GoShuttle Pro - Premium Transportation Service';
 const DESCRIPTION =
   'Professional shuttle service in Metro Manila. Reliable corporate transportation with modern fleet and experienced drivers.';
-const LOGO = '/assets/images/goshuttle-vertical-1762404728137.png';
+const LOGO = '/assets/images/goshuttle-logo.png';
 
 export const metadata = {
   metadataBase: new URL('https://goshuttle.ph'),

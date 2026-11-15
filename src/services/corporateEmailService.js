@@ -122,7 +122,7 @@ class CorporateEmailService {
   }
 
   _teamInvitationTemplate({ inviteeName, inviterName, companyName, department, role }) {
-    const signupUrl = 'https://goshuttle6927.builtwithrocket.new/signup';
+    const signupUrl = 'https://goshuttle.ph/auth/signup';
     return `<!DOCTYPE html>
 <html lang="en">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Team Invitation</title></head>

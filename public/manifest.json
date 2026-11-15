@@ -3,12 +3,12 @@
   "name": "GoShuttle Pro - Premium Transportation Service",
   "icons": [
     {
-      "src": "/assets/images/goshuttle-vertical-1762404728137.png",
+      "src": "/assets/images/goshuttle-logo.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "/assets/images/goshuttle-vertical-1762404728137.png",
+      "src": "/assets/images/goshuttle-logo.png",
       "sizes": "512x512",
       "type": "image/png"
     }

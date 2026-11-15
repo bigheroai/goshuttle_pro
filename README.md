@@ -48,8 +48,15 @@ export default function Page() { return <MyView />; }
 | --- | --- | --- |
 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` | public | Supabase client |
 | `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | public | Maps |
-| `NEXT_PUBLIC_AWS_LAMBDA_CHAT_COMPLETION_URL` | public | AI chat endpoint |
 | `RESEND_API_KEY` | server only | Email fallback route |
 | `SUPABASE_SERVICE_ROLE_KEY` | server only (optional) | Lets the server read PayMongo secrets once `app_settings` RLS is tightened |
 
 The legacy `VITE_*` names for the public variables are still accepted.
+
+AI chat completions (used by the admin fake-user scanner) are served by the
+admin-only `app/api/ai/chat` route through Netlify AI Gateway, which injects
+the OpenAI credentials at runtime — no API key needs to be configured.
+
+`console.log`/`info`/`debug` calls are stripped from production builds
+(`compiler.removeConsole` in `next.config.mjs`); `console.error` and
+`console.warn` are kept.

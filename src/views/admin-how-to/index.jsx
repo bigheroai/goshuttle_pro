@@ -3,6 +3,9 @@ import { Helmet } from '@/lib/helmet';
 import { Link } from '@/lib/router';
 import Icon from '../../components/AppIcon';
 
+// The PayMongo webhook is the `paymongo-webhook` Supabase Edge Function.
+const PAYMONGO_WEBHOOK_URL = `${(process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://<your-project>.supabase.co').replace(/\/$/, '')}/functions/v1/paymongo-webhook`;
+
 const sections = [
   {
     id: 'overview',
@@ -380,7 +383,7 @@ const sections = [
       },
       {
         heading: 'PayMongo Webhook Setup',
-        body: 'To receive automatic payment confirmations, register your webhook URL in the PayMongo dashboard: https://goshuttle6927.builtwithrocket.new/functions/v1/paymongo-webhook. The webhook handler processes payment.paid (marks booking as paid/confirmed), payment.failed (marks booking as failed), and source.chargeable (auto-charges and confirms) events. Paste your PayMongo webhook secret into the Webhook Secret field in Settings → Payments.'
+        body: `To receive automatic payment confirmations, register your webhook URL in the PayMongo dashboard: ${PAYMONGO_WEBHOOK_URL}. The webhook handler processes payment.paid (marks booking as paid/confirmed), payment.failed (marks booking as failed), and source.chargeable (auto-charges and confirms) events. Paste your PayMongo webhook secret into the Webhook Secret field in Settings → Payments.`
       }
     ]
   }
