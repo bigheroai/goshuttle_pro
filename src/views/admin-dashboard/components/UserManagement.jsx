@@ -312,19 +312,14 @@ const UserManagement = ({ users: propUsers, onUpdate }) => {
       setLoading(true);
       const targetUser = users?.find(u => u?.id === userId);
 
-      const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-
-      // Get current session token to authenticate the edge function call
       const { data: { session } } = await supabase?.auth?.getSession();
-      const authToken = session?.access_token || SUPABASE_ANON_KEY;
 
-      const response = await fetch(`${SUPABASE_URL}/functions/v1/delete-user`, {
+      const response = await fetch('/api/admin/delete-user', {
         method: 'POST',
+        credentials: 'same-origin',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-          'apikey': SUPABASE_ANON_KEY,
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
         },
         body: JSON.stringify({ user_id: userId }),
       });

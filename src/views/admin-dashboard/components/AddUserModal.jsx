@@ -62,36 +62,28 @@ const AddUserModal = ({ onClose, onSuccess }) => {
     setError('');
 
     try {
-      // Create auth user via Supabase admin signUp
-      const { data: authData, error: authError } = await supabase?.auth?.signUp({
-        email: form?.email?.trim()?.toLowerCase(),
-        password: form?.password,
-        options: {
-          data: {
-            full_name: form?.full_name?.trim(),
-            role: form?.role,
-          },
+      // Create a confirmed sign-in account and profile on the server
+      const { data: { session } } = await supabase?.auth?.getSession();
+      const res = await fetch('/api/admin/create-user', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
         },
+        body: JSON.stringify({
+          email: form?.email?.trim()?.toLowerCase(),
+          password: form?.password,
+          full_name: form?.full_name?.trim(),
+          role: form?.role,
+          phone: form?.phone?.trim() || null,
+          staff_role_id: form?.staff_role_id || null,
+          notes: form?.notes?.trim() || null,
+        }),
       });
-
-      if (authError) throw new Error(authError.message);
-      if (!authData?.user?.id) throw new Error('Failed to create auth user.');
-
-      // Upsert profile with extra fields via RPC
-      const { error: profileError } = await supabase?.rpc('admin_create_user_profile', {
-        p_user_id: authData?.user?.id,
-        p_email: form?.email?.trim()?.toLowerCase(),
-        p_full_name: form?.full_name?.trim(),
-        p_role: form?.role,
-        p_phone: form?.phone?.trim() || null,
-        p_staff_role_id: form?.staff_role_id || null,
-        p_notes: form?.notes?.trim() || null,
-        p_created_by: (await supabase?.auth?.getUser())?.data?.user?.id || null,
-      });
-
-      if (profileError) {
-        console.warn('Profile upsert warning:', profileError?.message);
-      }
+      const created = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(created?.error || 'Failed to create user.');
+      const authData = { user: created.user };
 
       await logAdminAction({
         actionType: AUDIT_ACTIONS?.USER_CREATED,

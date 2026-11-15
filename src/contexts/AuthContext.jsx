@@ -120,19 +120,15 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (error) {
-        if (error?.message?.includes('User already registered')) {
+        if (error?.message?.includes('already registered')) {
           throw new Error('An account with this email already exists. Please sign in instead.');
         }
         throw new Error(error?.message || 'Failed to create account');
       }
 
-      // Check if email confirmation is required
-      // Supabase returns user with identities=[] when email already exists (unconfirmed)
-      if (data?.user && !data?.user?.email_confirmed_at && data?.user?.identities?.length === 0) {
-        throw new Error('An account with this email already exists but is not confirmed. Please check your email for a confirmation link.');
-      }
-
-      return { user: data?.user, error: null };
+      // With email confirmation on, there is no session until the link in the
+      // confirmation email is clicked.
+      return { user: data?.user, error: null, needsConfirmation: !data?.session };
     } catch (error) {
       return { user: null, error: error?.message };
     }
@@ -146,14 +142,12 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       profileOperations?.clear();
       
-      // Sign out from Supabase
+      // Sign out from Netlify Identity
       const { error } = await supabase?.auth?.signOut();
       
       // Clear any cached data in localStorage
       try {
-        localStorage.removeItem('supabase.auth.token');
-        localStorage.removeItem('sb-' + supabase?.supabaseUrl?.split('//')?.[1]?.split('.')?.[0] + '-auth-token');
-        // Clear any other cached user data
+        // Clear cached user data
         Object.keys(localStorage)?.forEach(key => {
           if (key?.includes('auth') || key?.includes('user') || key?.includes('profile')) {
             localStorage.removeItem(key);
@@ -232,7 +226,7 @@ export const AuthProvider = ({ children }) => {
     loading,
     profileLoading,
     isAuthenticated: !!user,
-    isAdmin: userProfile?.role === 'admin',
+    isAdmin: ['admin', 'super_admin', 'superadmin'].includes(userProfile?.role),
     isCorporateManager: userProfile?.role === 'corporate_manager',
     signIn,
     signUp,

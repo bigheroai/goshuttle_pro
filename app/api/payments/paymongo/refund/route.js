@@ -1,13 +1,13 @@
 import { getPaymongoSettings, paymongoRequest, secretKeyFor } from '@/server/paymongo';
-import { getRequestUser, isAdmin, json } from '@/server/supabase';
+import { getRequestAuth, json } from '@/server/auth';
 
 export const dynamic = 'force-dynamic';
 
 /** Admin-only: issue a PayMongo refund. Body: { paymentId, amountInPHP, notes } */
 export async function POST(request) {
-  const auth = await getRequestUser(request);
+  const auth = await getRequestAuth(request);
   if (!auth) return json({ error: 'Not authenticated' }, 401);
-  if (!(await isAdmin(auth.token))) return json({ error: 'Admin access required' }, 403);
+  if (!auth.isAdmin) return json({ error: 'Admin access required' }, 403);
 
   let body;
   try {
@@ -21,7 +21,7 @@ export async function POST(request) {
     return json({ error: 'paymentId and a positive amount are required' }, 400);
   }
 
-  const settings = await getPaymongoSettings(auth.token);
+  const settings = await getPaymongoSettings();
   const secretKey = secretKeyFor(settings);
   if (!secretKey) return json({ error: 'PayMongo secret key is not configured' }, 400);
 

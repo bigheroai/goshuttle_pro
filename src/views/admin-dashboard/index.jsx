@@ -32,6 +32,7 @@ import CmsPageManager from './components/CmsPageManager';
 import CustomerManagement from './components/CustomerManagement';
 import AISecuritySettings from './components/AISecuritySettings';
 import PendingUserReview from './components/PendingUserReview';
+import DataMigration from './components/DataMigration';
 
 const AdminDashboard = () => {
   const { user, userProfile, isAdmin, loading } = useAuth();
@@ -157,7 +158,8 @@ const AdminDashboard = () => {
     { id: 'audit-panel', label: 'Audit Panel', icon: Shield },
     { id: 'audit', label: 'Audit Trail', icon: History },
     { id: 'notifications', label: 'Notification Logs', icon: Bell },
-    { id: 'settings', label: 'Settings', icon: Settings }
+    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'data-migration', label: 'Supabase Import', icon: Activity }
   ];
 
   if (!loading && userProfile && !isAdmin) {
@@ -410,6 +412,8 @@ const AdminDashboard = () => {
         return <AppSettings />;
       case 'ai-security':
         return <AISecuritySettings />;
+      case 'data-migration':
+        return <DataMigration />;
       default:
         return (
           <div className="text-center py-12">

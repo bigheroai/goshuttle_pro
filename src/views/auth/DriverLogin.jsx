@@ -98,6 +98,10 @@ const DriverLogin = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 border-t-4 border-emerald-500">
+            <div className="mb-6 rounded-md bg-blue-50 border border-blue-200 p-3 text-sm text-blue-800">
+              We moved to a new sign-in system. If you had an account before, please{' '}
+              <Link to="/auth/signup" className="font-medium underline">sign up again</Link> with the same email to restore your bookings and profile.
+            </div>
             <form className="space-y-6" onSubmit={handleSubmit}>
               {error && (
                 <div className="rounded-md bg-red-50 p-4">

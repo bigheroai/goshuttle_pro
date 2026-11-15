@@ -1,17 +1,17 @@
-import { getRequestUser, json } from '@/server/supabase';
+import { getRequestAuth, json } from '@/server/auth';
 
 export const dynamic = 'force-dynamic';
 
 const FROM_EMAIL = 'noreply@goshuttle.ph';
 
 /**
- * Server-side Resend fallback for when the Supabase edge function is
- * unavailable. Requires a signed-in Supabase user so it can't be used as an
+ * Server-side Resend fallback for when the Supabase email function is
+ * unavailable. Requires a signed-in user so it can't be used as an
  * open mail relay. The sender address is fixed server-side.
  * Body: { to, subject, html, text?, fromName? }
  */
 export async function POST(request) {
-  const auth = await getRequestUser(request);
+  const auth = await getRequestAuth(request);
   if (!auth) return json({ success: false, error: 'Not authenticated' }, 401);
 
   const apiKey = process.env.RESEND_API_KEY || process.env.VITE_RESEND_API_KEY;

@@ -95,7 +95,7 @@ const AuditTrail = () => {
     return true;
   });
 
-  const isAdmin = userProfile?.role === 'admin';
+  const isAdmin = ['admin', 'super_admin'].includes(userProfile?.role);
 
   return (
     <div className="space-y-6">

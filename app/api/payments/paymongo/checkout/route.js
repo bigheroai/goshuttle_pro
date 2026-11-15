@@ -1,5 +1,5 @@
 import { getPaymongoSettings, paymongoRequest, secretKeyFor } from '@/server/paymongo';
-import { json } from '@/server/supabase';
+import { json } from '@/server/auth';
 
 export const dynamic = 'force-dynamic';
 
