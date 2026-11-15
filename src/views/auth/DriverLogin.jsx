@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from '@/lib/router';
 import { Helmet } from '@/lib/helmet';
 
 import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
 import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import Header from '../../components/ui/Header';
 
 const DriverLogin = () => {
@@ -15,6 +16,14 @@ const DriverLogin = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const router = useRouter();
+
+  // Start downloading the page people land on after sign-in while they type
+  // their password, so it is ready the moment the redirect happens.
+  useEffect(() => {
+    router?.prefetch?.('/driver-assignment-system');
+    import('@/views/driver-assignment-system').catch(() => {});
+  }, [router]);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {

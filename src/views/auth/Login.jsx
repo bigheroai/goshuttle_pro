@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from '@/lib/router';
 import { Helmet } from '@/lib/helmet';
 import Button from '../../components/ui/Button';
 import Input from '../../components/ui/Input';
 import Icon from '../../components/AppIcon';
 import { useAuth } from '../../contexts/AuthContext';
+import { useRouter } from 'next/navigation';
 import Header from '../../components/ui/Header';
 
 const Login = () => {
@@ -15,6 +16,14 @@ const Login = () => {
     password: ''
   });
   const [error, setError] = useState('');
+  const router = useRouter();
+
+  // Start downloading the page people land on after sign-in while they type
+  // their password, so it is ready the moment the redirect happens.
+  useEffect(() => {
+    router?.prefetch?.('/customer-account');
+    import('@/views/customer-account').catch(() => {});
+  }, [router]);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
