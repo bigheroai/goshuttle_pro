@@ -3,7 +3,7 @@ import { callLambdaFunction } from '../aiClient';
 /**
  * Lambda endpoints configuration
  */
-const CHAT_COMPLETION_ENDPOINT = import.meta.env?.VITE_AWS_LAMBDA_CHAT_COMPLETION_URL;
+const CHAT_COMPLETION_ENDPOINT = process.env.NEXT_PUBLIC_AWS_LAMBDA_CHAT_COMPLETION_URL;
 
 /**
  * Get chat completion from any AI provider

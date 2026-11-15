@@ -1,7 +1,5 @@
 import { supabase } from '../lib/supabase';
 
-const PAYMONGO_API_BASE = 'https://api.paymongo.com/v1';
-
 class PaymongoService {
   constructor() {
     this._settings = null;
@@ -10,14 +8,11 @@ class PaymongoService {
   async getSettings() {
     if (this._settings) return this._settings;
     try {
-      const { data, error } = await supabase
-        ?.from('app_settings')
-        ?.select('setting_value')
-        ?.eq('setting_key', 'paymongo_gateway_settings')
-        ?.single();
-
-      if (error || !data) return null;
-      this._settings = data?.setting_value;
+      // Served by app/api/payments/paymongo/config – secret keys are stripped server-side.
+      const response = await fetch('/api/payments/paymongo/config', { cache: 'no-store' });
+      if (!response.ok) return null;
+      const { settings } = await response.json();
+      this._settings = settings || null;
       return this._settings;
     } catch {
       return null;
@@ -46,13 +41,6 @@ class PaymongoService {
     return mode === 'live' ? settings?.public_key_live : settings?.public_key_test;
   }
 
-  async getSecretKey() {
-    const settings = await this.getSettings();
-    if (!settings) return null;
-    const mode = settings?.mode || 'test';
-    return mode === 'live' ? settings?.secret_key_live : settings?.secret_key_test;
-  }
-
   async getSupportedMethods() {
     const settings = await this.getSettings();
     if (!settings?.supported_methods) return [];
@@ -68,8 +56,15 @@ class PaymongoService {
     return result;
   }
 
-  _authHeader(secretKey) {
-    return 'Basic ' + btoa(secretKey + ':');
+  async _checkout(kind, params) {
+    const response = await fetch('/api/payments/paymongo/checkout', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ kind, ...params }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result?.error || 'PayMongo request failed');
+    return result;
   }
 
   /**
@@ -77,53 +72,7 @@ class PaymongoService {
    * Returns { checkoutUrl, paymentLinkId } on success.
    */
   async createPaymentLink({ amountInPHP, description, bookingRef, successUrl, cancelUrl }) {
-    const settings = await this.getSettings();
-    if (!settings?.enabled) throw new Error('PayMongo is not enabled');
-
-    const secretKey = await this.getSecretKey();
-    if (!secretKey) throw new Error('PayMongo secret key is not configured');
-
-    const resolvedSuccessUrl = successUrl || settings?.success_url || window.location?.origin + '/booking-confirmed';
-    const resolvedCancelUrl = cancelUrl || settings?.cancel_url || window.location?.href;
-
-    const amountInCentavos = Math.round(amountInPHP * 100);
-
-    const payload = {
-      data: {
-        attributes: {
-          amount: amountInCentavos,
-          currency: 'PHP',
-          description: description || settings?.checkout_description || 'GoShuttle Booking Payment',
-          remarks: bookingRef || '',
-          redirect: {
-            success: resolvedSuccessUrl,
-            failed: resolvedCancelUrl,
-          },
-        },
-      },
-    };
-
-    const response = await fetch(`${PAYMONGO_API_BASE}/links`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: this._authHeader(secretKey),
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response?.json();
-
-    if (!response?.ok) {
-      const errMsg = result?.errors?.[0]?.detail || 'Failed to create PayMongo payment link';
-      throw new Error(errMsg);
-    }
-
-    return {
-      checkoutUrl: result?.data?.attributes?.checkout_url,
-      paymentLinkId: result?.data?.id,
-      referenceNumber: result?.data?.attributes?.reference_number,
-    };
+    return this._checkout('link', { amountInPHP, description, bookingRef, successUrl, cancelUrl });
   }
 
   /**
@@ -131,67 +80,7 @@ class PaymongoService {
    * Returns { redirectUrl, sourceId }
    */
   async createSource({ type, amountInPHP, description, bookingRef, successUrl, failedUrl }) {
-    const settings = await this.getSettings();
-    if (!settings?.enabled) throw new Error('PayMongo is not enabled');
-
-    const secretKey = await this.getSecretKey();
-    if (!secretKey) throw new Error('PayMongo secret key is not configured');
-
-    const resolvedSuccessUrl = successUrl || settings?.success_url || window.location?.origin + '/booking-confirmed';
-    const resolvedFailedUrl = failedUrl || settings?.cancel_url || window.location?.href;
-
-    const amountInCentavos = Math.round(amountInPHP * 100);
-
-    // Map our internal IDs to PayMongo source types
-    const sourceTypeMap = {
-      gcash: 'gcash',
-      paymaya: 'paymaya',
-      grab_pay: 'grab_pay',
-      qrph: 'qrph',
-      dob: 'dob',
-      billease: 'billease',
-    };
-
-    const paymongoType = sourceTypeMap?.[type] || type;
-
-    const payload = {
-      data: {
-        attributes: {
-          amount: amountInCentavos,
-          currency: 'PHP',
-          type: paymongoType,
-          description: description || settings?.checkout_description || 'GoShuttle Booking Payment',
-          redirect: {
-            success: resolvedSuccessUrl,
-            failed: resolvedFailedUrl,
-          },
-          billing: {
-            name: bookingRef || 'GoShuttle Customer',
-          },
-        },
-      },
-    };
-
-    const response = await fetch(`${PAYMONGO_API_BASE}/sources`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: this._authHeader(secretKey),
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response?.json();
-
-    if (!response?.ok) {
-      const errMsg = result?.errors?.[0]?.detail || 'Failed to create PayMongo source';
-      throw new Error(errMsg);
-    }
-
-    return {
-      redirectUrl: result?.data?.attributes?.redirect?.checkout_url,
-      sourceId: result?.data?.id,
-    };
+    return this._checkout('source', { type, amountInPHP, description, bookingRef, successUrl, cancelUrl: failedUrl });
   }
 
   /**
@@ -199,47 +88,24 @@ class PaymongoService {
    * Returns { clientKey, paymentIntentId }
    */
   async createPaymentIntent({ amountInPHP, description }) {
-    const settings = await this.getSettings();
-    if (!settings?.enabled) throw new Error('PayMongo is not enabled');
+    return this._checkout('intent', { amountInPHP, description });
+  }
 
-    const secretKey = await this.getSecretKey();
-    if (!secretKey) throw new Error('PayMongo secret key is not configured');
-
-    const amountInCentavos = Math.round(amountInPHP * 100);
-
-    const payload = {
-      data: {
-        attributes: {
-          amount: amountInCentavos,
-          currency: 'PHP',
-          payment_method_allowed: ['card'],
-          description: description || settings?.checkout_description || 'GoShuttle Booking Payment',
-          statement_descriptor: settings?.statement_descriptor || 'GOSHUTTLE',
-          capture_type: 'automatic',
-        },
-      },
-    };
-
-    const response = await fetch(`${PAYMONGO_API_BASE}/payment_intents`, {
+  /**
+   * Admin-only refund. Requires the caller's Supabase access token.
+   * Returns { refundId }
+   */
+  async refund({ paymentId, amountInPHP, notes }) {
+    const { data } = await supabase?.auth?.getSession();
+    const token = data?.session?.access_token;
+    const response = await fetch('/api/payments/paymongo/refund', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: this._authHeader(secretKey),
-      },
-      body: JSON.stringify(payload),
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token || ''}` },
+      body: JSON.stringify({ paymentId, amountInPHP, notes }),
     });
-
-    const result = await response?.json();
-
-    if (!response?.ok) {
-      const errMsg = result?.errors?.[0]?.detail || 'Failed to create payment intent';
-      throw new Error(errMsg);
-    }
-
-    return {
-      clientKey: result?.data?.attributes?.client_key,
-      paymentIntentId: result?.data?.id,
-    };
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result?.error || 'PayMongo refund API error');
+    return result;
   }
 }
 

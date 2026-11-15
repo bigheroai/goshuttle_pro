@@ -103,13 +103,11 @@ class NotificationService {
       }
 
       const fromEmail = settings?.from_email || 'noreply@goshuttle.ph';
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
 
       const { data, error } = await supabase?.functions?.invoke('send-booking-confirmation', {
         body: {
           type: 'multi_role_notification',
           from_email: fromEmail,
-          resend_api_key: resendApiKey,
           booking_data: {
             booking_id: bookingData?.bookingCode || bookingData?.booking_code || bookingData?.id,
             customer_name: bookingData?.primaryPassengerFirstName
@@ -168,7 +166,6 @@ class NotificationService {
           body: {
             type: 'driver_signup_notification',
             from_email: fromEmail,
-            resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
             driver_data: {
               full_name: driverData?.fullName || driverData?.full_name,
               email: driverData?.email,
@@ -214,14 +211,12 @@ class NotificationService {
         return { success: false, message: 'No driver email provided' };
       }
 
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
 
       const { data, error } = await supabase?.functions?.invoke('send-booking-confirmation', {
         body: {
           type: 'partner_welcome',
           to_email: driverEmail,
           from_email: fromEmail || 'noreply@goshuttle.ph',
-          resend_api_key: resendApiKey,
           driver_data: {
             full_name: driverData?.fullName || driverData?.full_name,
             email: driverData?.email,
@@ -266,7 +261,6 @@ class NotificationService {
           type: 'partner_booking_notification',
           to_email: partnerEmail,
           from_email: fromEmail,
-          resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
           booking_data: {
             booking_id: bookingData?.bookingCode || bookingData?.booking_code || bookingData?.id,
             customer_name: bookingData?.primaryPassengerFirstName

@@ -1,0 +1,7 @@
+/* Rules carried over from the former index.html inline <style> block */
+#root { min-height: 100vh; }
+body { font-family: Inter, system-ui, -apple-system, sans-serif; margin: 0; }
+img { max-width: 100%; height: auto; }
+.hero-section { min-height: 100vh; background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #1e293b 100%); }
+header, [class*="header"] { height: 64px; }
+html { scroll-behavior: smooth; }

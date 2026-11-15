@@ -9,9 +9,8 @@ class CorporateEmailService {
    */
   async _sendEmail({ to, subject, html }) {
     try {
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
       const { data, error } = await supabase?.functions?.invoke('send-email-notification', {
-        body: { to, subject, html, emailType: 'corporate', resend_api_key: resendApiKey }
+        body: { to, subject, html, emailType: 'corporate' }
       });
 
       if (error) throw new Error(error?.message || 'Edge Function error');

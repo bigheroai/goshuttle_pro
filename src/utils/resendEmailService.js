@@ -4,7 +4,6 @@
  * Sends booking confirmation emails directly via Resend REST API.
  */
 
-const RESEND_API_KEY = import.meta.env?.VITE_RESEND_API_KEY;
 const FROM_EMAIL = 'noreply@goshuttle.ph';
 const FROM_NAME = 'GoShuttle Pro';
 
@@ -219,8 +218,8 @@ async function safeInvokeEdgeFunction(supabaseClient, functionName, body) {
  */
 async function safeDirectFetch(supabaseClient, functionName, body) {
   try {
-    const supabaseUrl = import.meta.env?.VITE_SUPABASE_URL;
-    const supabaseAnonKey = import.meta.env?.VITE_SUPABASE_ANON_KEY;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseAnonKey) return null;
 
     const url = `${supabaseUrl}/functions/v1/${functionName}`;
@@ -256,8 +255,8 @@ async function safeDirectFetch(supabaseClient, functionName, body) {
 
 /**
  * Send a booking confirmation email to a customer.
- * Uses the Supabase edge function (server-side) to avoid CORS issues.
- * The VITE_RESEND_API_KEY is passed in the request body as a fallback
+ * The Resend API key is never sent from the browser; the edge function uses
+ * its own RESEND_API_KEY secret.
  * so emails send even when the Supabase RESEND_API_KEY secret is not configured.
  * @param {string} toEmail - recipient email
  * @param {object} bookingData - booking details
@@ -273,7 +272,7 @@ export async function sendBookingConfirmationEmail(toEmail, bookingData, supabas
     bookingData?.booking_reference || '';
 
   // Use edge function (server-side, no CORS issues)
-  // VITE_RESEND_API_KEY is passed in the body as fallback for when the Supabase secret is not set
+  // The edge function uses its own RESEND_API_KEY secret
   if (supabaseClient) {
     const edgeData = await safeInvokeEdgeFunction(supabaseClient, 'send-booking-confirmation', {
       type: 'customer_confirmation',
@@ -301,11 +300,11 @@ export async function sendBookingConfirmationEmail(toEmail, bookingData, supabas
     }
 
     // Edge function returned fallback_required — means RESEND_API_KEY secret not set in Supabase
-    // and VITE_RESEND_API_KEY was also not available in the body
+    // (the browser never sends a key)
     if (edgeData?.fallback_required) {
       return {
         success: false,
-        error: 'Email service not configured. Please set RESEND_API_KEY in Supabase edge function secrets or add VITE_RESEND_API_KEY to your environment variables.'
+        error: 'Email service not configured. Please set RESEND_API_KEY in Supabase edge function secrets (Edge Function secrets).'
       };
     }
 

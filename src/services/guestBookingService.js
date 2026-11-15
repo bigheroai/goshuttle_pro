@@ -64,7 +64,6 @@ export const guestBookingService = {
               type: 'admin_notification',
               admin_email: settings?.admin_email,
               ...(from_email ? { from_email } : {}),
-              resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
               booking_data: emailData
             }
           });
@@ -476,7 +475,6 @@ export const guestBookingService = {
         type: 'booking_cancellation',
         customer_email: recipientEmail,
         to_email: recipientEmail,
-        resend_api_key: import.meta.env?.VITE_RESEND_API_KEY || '',
         booking_data: cancellationData
       }
     });
@@ -509,7 +507,6 @@ export const guestBookingService = {
   // Send booking notification email
   async sendBookingNotification(booking, emailType) {
     try {
-      const resendApiKey = import.meta.env?.VITE_RESEND_API_KEY || '';
       const { data, error } = await supabase?.functions?.invoke('send-guest-booking-notification', {
         body: {
           booking: {
@@ -524,7 +521,6 @@ export const guestBookingService = {
             status: booking?.status
           },
           emailType,
-          resend_api_key: resendApiKey,
         }
       });
 

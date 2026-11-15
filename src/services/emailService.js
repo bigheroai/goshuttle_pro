@@ -9,7 +9,7 @@ export class EmailService {
     // Default configuration - can be overridden by database settings
     this.defaultConfig = {
       // Resend API Config
-      apiKey: import.meta.env?.VITE_RESEND_API_KEY || '',
+      apiKey: '', // Resend key is server-only (see app/api/email/send)
       fromEmail: 'noreply@goshuttle.ph',
       fromName: 'GoShuttle Pro',
       apiUrl: 'https://api.resend.com/emails',
@@ -317,57 +317,37 @@ export class EmailService {
    * FALLBACK: Direct Resend API call (browser-based)
    */
   async sendViaDirectResendAPI({ to, subject, html, text, config }) {
-    try {
-      if (!config?.apiKey && !import.meta.env?.VITE_RESEND_API_KEY) {
-        throw new Error('Resend API key is not configured. Please set VITE_RESEND_API_KEY environment variable or configure SMTP settings.');
-      }
-
-      const apiKey = config?.apiKey || import.meta.env?.VITE_RESEND_API_KEY;
-      const fromEmail = 'noreply@goshuttle.ph';
-      const fromName = config?.sender_name || config?.fromName || 'GoShuttle Pro';
-
-      // Prepare email payload
-      const emailPayload = {
-        from: `${fromName} <${fromEmail}>`,
-        to: [to],
-        subject: subject,
-        html: html
-      };
-
-      // Add plain text if provided
-      if (text) {
-        emailPayload.text = text;
-      }
-
-      // Send email via Resend API
-      const response = await fetch('https://api.resend.com/emails', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(emailPayload)
-      });
-
-      const result = await response?.json();
-
-      if (!response?.ok) {
-        throw new Error(result?.message || 'Failed to send email via Resend API');
-      }
-
-      return {
-        success: true,
-        id: result?.id,
-        message: 'Email sent successfully via Direct Resend API',
-        service: 'resend_direct',
-        from: fromEmail,
-        data: result
-      };
-
-    } catch (error) {
-      console.error('Direct Resend API error:', error);
-      throw error; // Re-throw since this is the final fallback
+    // The Resend API key lives on the server only. This fallback goes through
+    // the Next.js route handler at /api/email/send, which requires a signed-in
+    // Supabase session.
+    const fromName = config?.sender_name || config?.fromName || 'GoShuttle Pro';
+    const { data: sessionData } = await supabase?.auth?.getSession();
+    const accessToken = sessionData?.session?.access_token;
+    if (!accessToken) {
+      throw new Error('Email fallback requires a signed-in user. Please ensure the Supabase edge function has RESEND_API_KEY configured.');
     }
+
+    const response = await fetch('/api/email/send', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ to, subject, html, text, fromName }),
+    });
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok || !result?.success) {
+      throw new Error(result?.error || 'Failed to send email via server');
+    }
+
+    return {
+      success: true,
+      id: result?.id,
+      message: 'Email sent successfully via server route',
+      service: 'resend_server',
+      from: result?.from,
+      data: result,
+    };
   }
 
   /**
@@ -389,7 +369,7 @@ export class EmailService {
       },
       resend: {
         configured: !!mergedConfig?.apiKey,
-        hasApiKey: !!import.meta.env?.VITE_RESEND_API_KEY,
+        hasApiKey: false, // never exposed to the browser
         fromEmail: mergedConfig?.sender_email || mergedConfig?.fromEmail,
         status: !mergedConfig?.smtp_enabled && mergedConfig?.apiKey ? 'Active' : 'Fallback'
       },
