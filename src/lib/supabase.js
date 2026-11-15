@@ -246,21 +246,32 @@ class RpcBuilder {
 // ---------------------------------------------------------------------------
 
 let profileCache = { token: null, value: null };
+// One in-flight /api/auth/me request per token, shared by every caller, so a
+// sign-in does not hit the server twice in parallel.
+let profileRequest = { token: null, promise: null };
 
 /** Asks the server for the caller's profile id/role (links imported profiles on first sign-in). */
 async function loadServerProfile(force = false) {
   const token = accessToken();
   if (!token) return null;
+  if (profileRequest.token === token && profileRequest.promise) return profileRequest.promise;
   if (!force && profileCache.token === token && profileCache.value) return profileCache.value;
-  try {
-    const res = await fetch('/api/auth/me', { credentials: 'same-origin', headers: authHeaders() });
-    if (!res.ok) return null;
-    const value = await res.json();
-    profileCache = { token, value };
-    return value;
-  } catch {
-    return null;
-  }
+  let promise = null;
+  promise = (async () => {
+    try {
+      const res = await fetch('/api/auth/me', { credentials: 'same-origin', headers: authHeaders() });
+      if (!res.ok) return null;
+      const value = await res.json();
+      profileCache = { token, value };
+      return value;
+    } catch {
+      return null;
+    } finally {
+      if (profileRequest.promise === promise) profileRequest = { token: null, promise: null };
+    }
+  })();
+  profileRequest = { token, promise };
+  return promise;
 }
 
 function toAppUser(identityUser, server) {
@@ -290,7 +301,14 @@ async function currentSession(forceProfile = false) {
   const server = await loadServerProfile(forceProfile);
   const user = toAppUser(identityUser, server);
   const token = accessToken();
-  return { access_token: token, token_type: 'bearer', user, refresh_token: readCookie('nf_refresh') };
+  return {
+    access_token: token,
+    token_type: 'bearer',
+    user,
+    refresh_token: readCookie('nf_refresh'),
+    // Full user_profiles row from /api/auth/me, so the app needn't query it again.
+    profile: server?.profile || null,
+  };
 }
 
 function friendlyAuthError(error) {
@@ -331,6 +349,7 @@ if (isBrowser) {
     if (!name) return;
     if (name === 'SIGNED_OUT') {
       profileCache = { token: null, value: null };
+      profileRequest = { token: null, promise: null };
       emit(name, null);
       return;
     }
@@ -393,6 +412,7 @@ const auth = {
       console.warn('Sign-out failed:', err?.message || err);
     }
     profileCache = { token: null, value: null };
+    profileRequest = { token: null, promise: null };
     emit('SIGNED_OUT', null);
     return { error: null };
   },

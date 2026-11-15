@@ -69,7 +69,15 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
       
       if (session?.user) {
-        profileOperations?.load(session?.user?.id); // Fire-and-forget
+        // The session already carries the profile from /api/auth/me; only
+        // fall back to a separate query when it is missing.
+        const freshProfile = !event || event === 'INITIAL_SESSION' || event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED';
+        if (freshProfile && session?.profile && session.profile.id === session.user.id) {
+          setUserProfile(session.profile);
+          setProfileLoading(false);
+        } else {
+          profileOperations?.load(session?.user?.id); // Fire-and-forget
+        }
       } else {
         profileOperations?.clear();
       }
