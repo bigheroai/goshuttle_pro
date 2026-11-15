@@ -88,9 +88,6 @@ const AdminLogin = () => {
 
         <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
           <div className="bg-gray-800 border border-gray-700 py-8 px-4 shadow-xl sm:rounded-xl sm:px-10">
-            <div className="mb-6 rounded-md bg-gray-700/50 border border-gray-600 p-3 text-xs text-gray-300">
-              We moved to a new sign-in system. First time here since the move? <Link to="/auth/signup" className="underline">Sign up</Link> with your admin email, confirm it from your inbox, then sign in.
-            </div>
             <form className="space-y-6" onSubmit={handleSubmit}>
               {error && (
                 <div className="rounded-md bg-red-900/40 border border-red-700 p-4">
