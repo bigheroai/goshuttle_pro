@@ -10,3 +10,9 @@
   # Netlify's secrets scanner fails every Git build. DEMO_ADMIN_PASSWORD is
   # deliberately NOT listed: it must never appear in the code.
   SECRETS_SCAN_OMIT_KEYS = "DEMO_MANAGER_PASSWORD,DEMO_CUSTOMER_PASSWORD"
+
+# Explicitly enable the Next.js runtime. Without it, Git-triggered builds
+# published the raw .next folder as static files (every page returned 404)
+# instead of deploying the server function that renders the app.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
